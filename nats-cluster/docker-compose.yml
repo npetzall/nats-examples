@@ -1,0 +1,35 @@
+version: '3'
+services:
+  nats01:
+    image: nats:2.0.0
+    container_name: nats01
+    command: -c /nats.cfg -p 4222 -m 8222
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    expose:
+      - "6222"
+    volumes:
+      - "$PWD/nats.cfg:/nats.cfg"
+  nats02:
+    image: nats:2.0.0
+    container_name: nats02
+    command: -c /nats.cfg -p 4223 -m 8223
+    ports:
+      - "4223:4223"
+      - "8223:8223"
+    expose:
+      - "6222"
+    volumes:
+      - "$PWD/nats.cfg:/nats.cfg"
+  nats03:
+    image: nats:2.0.0
+    container_name: nats03
+    command: -c /nats.cfg -p 4224 -m 8224
+    ports:
+      - "4224:4224"
+      - "8224:8224"
+    expose:
+      - "6222"
+    volumes:
+      - "$PWD/nats.cfg:/nats.cfg"
