@@ -1,0 +1,3 @@
+#!/bin/bash
+source .env
+docker run -v "$SK:/sk" --rm nats-nk $@

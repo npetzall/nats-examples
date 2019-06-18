@@ -1,0 +1,19 @@
+FROM golang:1.12.4 AS builder
+
+LABEL maintainer="Nils Petzall <nils.petzall@gmail.com>"
+
+RUN go get github.com/nats-io/nsc
+
+WORKDIR /go/src/github.com/nats-io/nsc/
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' -o /go/bin/nsc *.go
+
+#### FINAL IMAGE ####
+FROM alpine:3.9
+
+COPY --from=builder /go/bin/nsc /nsc
+
+ENV NKEYS_PATH=/nsc_data/nkeys
+ENV NSC_HOME=/nsc_data
+
+ENTRYPOINT ["/nsc"]

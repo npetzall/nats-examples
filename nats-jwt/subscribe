@@ -1,0 +1,3 @@
+#!/bin/bash
+source .env
+docker run -v "$NSC_STORE_KEYS//accounts//Subber//users//Subber01.creds:/client.creds" --rm nats-sub -s "nats://10.0.75.1:4223" -creds "//client.creds" $1

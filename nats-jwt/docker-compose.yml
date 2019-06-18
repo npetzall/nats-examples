@@ -1,8 +1,21 @@
 version: '3'
 services:
+  nats_account_server:
+    image: nats-account-server
+    container_name: nas
+    command: -c /nas.cfg -hp "0.0.0.0:9090"
+    ports:
+      - "9090:9090"
+    volumes:
+      - "$BASE_MOUNT/nas.cfg:/nas.cfg"
+      - "$NSC_STORE\\NatsOperator.jwt:/operator.jwt"
+      - "$NSC_STORE\\accounts\\System\\System.jwt:/systemaccount.jwt"
+      - "$NSC_STORE_KEYS\\accounts\\System\\users\\NatsAccountServer.creds:/client.creds"
   nats01:
     image: nats:2.0.0
     container_name: nats01
+    depends_on:
+      - nats_account_server
     command: -c /nats.cfg -p 4222 -m 8222
     ports:
       - "4222:4222"
@@ -11,9 +24,12 @@ services:
       - "6222"
     volumes:
       - "$BASE_MOUNT/nats.cfg:/nats.cfg"
+      - "$NSC_STORE\\NatsOperator.jwt:/operator.jwt"
   nats02:
     image: nats:2.0.0
     container_name: nats02
+    depends_on:
+      - nats_account_server
     command: -c /nats.cfg -p 4223 -m 8223
     ports:
       - "4223:4223"
@@ -22,8 +38,11 @@ services:
       - "6222"
     volumes:
       - "$BASE_MOUNT/nats.cfg:/nats.cfg"
+      - "$NSC_STORE\\NatsOperator.jwt:/operator.jwt"
   nats03:
     image: nats:2.0.0
+    depends_on:
+      - nats_account_server
     container_name: nats03
     command: -c /nats.cfg -p 4224 -m 8224
     ports:
@@ -33,3 +52,4 @@ services:
       - "6222"
     volumes:
       - "$BASE_MOUNT/nats.cfg:/nats.cfg"
+      - "$NSC_STORE\\NatsOperator.jwt:/operator.jwt"

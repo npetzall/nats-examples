@@ -1,0 +1,16 @@
+FROM golang:1.12.4 AS builder
+
+LABEL maintainer="Nils Petzall <nils.petzall@gmail.com>"
+
+RUN go get github.com/nats-io/nkeys
+
+WORKDIR /go/src/github.com/nats-io/nkeys/nk
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' -o /go/bin/nk *.go
+
+#### FINAL IMAGE ####
+FROM scratch
+
+COPY --from=builder /go/bin/nk /nk
+
+ENTRYPOINT ["/nk"]
